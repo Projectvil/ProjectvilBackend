@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option csharp_namespace = "WebGateway";
+
+package authService;
+
+service AuthService {
+    rpc Login (LoginRequest) returns (TokenResponse);
+}
+
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message TokenResponse {
+    string access_token = 1;
+    string refresh_token = 2;
+}

@@ -53,4 +53,19 @@ public class AuthBllService : IAuthBllService
         };
 
     }
+
+    public async Task<SignUpResult> SignUp(string email, string password, string name)
+    {
+        var registrationResult = await _userManager.CreateAsync(new User() { Email = email, UserName = name }, password);
+
+        if (registrationResult.Succeeded)
+        {
+            return new SignUpResult();
+        }
+
+        return new SignUpResult()
+        {
+            ErrorMessage = registrationResult.Errors.ToString()
+        };
+    }
 }

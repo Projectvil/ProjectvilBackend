@@ -36,4 +36,11 @@ public class AuthService : AuthMicroservice.AuthService.AuthServiceBase
         
         throw new RpcException(new Status(StatusCode.PermissionDenied, "Permission denied"), metadata);
     }
+
+    public override async Task<SignUpResult> SignUp(SignUpRequest request, ServerCallContext context)
+    {
+        await _authBllService.SignUp(request.Email, request.Password, request.Name);
+
+        return new SignUpResult();
+    }
 }

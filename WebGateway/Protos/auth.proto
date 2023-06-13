@@ -5,15 +5,26 @@ option csharp_namespace = "WebGateway";
 package authService;
 
 service AuthService {
-    rpc Login (LoginRequest) returns (TokenResponse);
+  rpc Login (LoginRequest) returns (TokenResponse);
+  rpc SignUp (SignUpRequest) returns (SignUpResult);
 }
 
 message LoginRequest {
-    string email = 1;
-    string password = 2;
+  string email = 1;
+  string password = 2;
 }
 
 message TokenResponse {
-    string access_token = 1;
-    string refresh_token = 2;
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+message SignUpRequest {
+	string email = 1;
+	string password = 2;
+	string name = 3;
+}
+
+message SignUpResult {
+	string error_message = 1;
 }

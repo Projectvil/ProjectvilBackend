@@ -9,8 +9,10 @@ public class AuthService : AuthMicroservice.AuthService.AuthServiceBase
     private readonly ILogger<AuthService> _logger;
     private readonly IAuthBllService _authBllService;
 
+
     public AuthService(ILogger<AuthService> logger, 
-        IAuthBllService authBllService)
+        IAuthBllService authBllService
+        )
     {
         _logger = logger;
         _authBllService = authBllService;

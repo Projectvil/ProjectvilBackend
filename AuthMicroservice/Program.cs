@@ -36,13 +36,28 @@ builder.Services.AddScoped<IAuthBllService, AuthBllService>();
 builder.Services.AddScoped<IDbSeed, DbSeed>();
 builder.Services.AddScoped<ITokensService, TokenService>();
 
-builder.Services.AddLogging(loggingBuilder =>
+
+if (!builder.Environment.IsDevelopment()) 
 {
-    loggingBuilder.AddSeq(builder.Configuration.GetSection("Seq"));
-});
+    builder.Services.AddLogging(loggingBuilder =>
+    {
+        loggingBuilder.AddSeq(builder.Configuration.GetSection("SeqCommonNetwork"));
+    });
+}
 
 
-var dbConnectionString = builder.Configuration.GetConnectionString("DockerPostgres");
+
+string dbConnectionString;
+if (builder.Environment.IsDevelopment())
+{
+    dbConnectionString = builder.Configuration.GetConnectionString("DockerLocalDb");
+}
+else 
+{
+    dbConnectionString = builder.Configuration.GetConnectionString("CommonNetworkDb");
+    
+}
+
 builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseNpgsql(dbConnectionString));
 

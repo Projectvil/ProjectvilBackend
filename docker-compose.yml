@@ -34,3 +34,21 @@ services:
       - /https:/https
     depends_on:
       - postgres
+  
+  auth_microservice:
+    build:
+      context: ./AuthMicroservice
+      dockerfile: Dockerfile
+    container_name: auth_microservice
+    ports:
+      - '5012:80'
+      - '7055:443'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - /https:/https
+    depends_on:
+      - postgres

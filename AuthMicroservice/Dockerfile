@@ -1,20 +1,16 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-WORKDIR /src
-COPY ["AuthMicroservice/AuthMicroservice.csproj", "AuthMicroservice/"]
-RUN dotnet restore "AuthMicroservice/AuthMicroservice.csproj"
-COPY . .
-WORKDIR "/src/AuthMicroservice"
-RUN dotnet build "AuthMicroservice.csproj" -c Release -o /app/build
+# Copy csproj and restore as distinct layers
+COPY *.csproj ./
+RUN dotnet restore
 
-FROM build AS publish
-RUN dotnet publish "AuthMicroservice.csproj" -c Release -o /app/publish /p:UseAppHost=false
+# Copy everything else and build
+COPY . ./
+RUN dotnet publish -c Release -o out
 
-FROM base AS final
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/out ./
 ENTRYPOINT ["dotnet", "AuthMicroservice.dll"]

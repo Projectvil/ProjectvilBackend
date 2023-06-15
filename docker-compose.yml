@@ -17,4 +17,20 @@ services:
     ports:
       - "5052:80"
 
-  
+  web_gateway:
+    build:
+      context: /WebGateway
+      dockerfile: Dockerfile
+    container_name: web_gateway
+    ports:
+      - '5093:80'
+      - '7250:443'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - ~/.aspnet/https:/https:ro   
+    depends_on:
+      - postgres

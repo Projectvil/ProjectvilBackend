@@ -19,6 +19,8 @@ public class AuthController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Login(string email, string password)
     {
+        _logger.LogWarning(message: $"Login endpoint: email:{email}, password:{password}");
+
         TokenResponse result = new TokenResponse();
         
         try

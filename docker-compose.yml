@@ -34,6 +34,18 @@ services:
       - /https:/https
     depends_on:
       - postgres
+
+  seq:
+    container_name: seq
+    image: datalust/seq:latest
+    ports:
+      - "5341:80"
+    volumes:
+      - seq-data:/data
+    environment:
+      - ACCEPT_EULA=Y
+    restart: always
+
   
   auth_microservice:
     build:
@@ -52,3 +64,5 @@ services:
       - /https:/https
     depends_on:
       - postgres
+volumes:
+  seq-data:

@@ -18,6 +18,9 @@ public class AuthService : AuthMicroservice.AuthService.AuthServiceBase
 
     public override async Task<TokenResponse> Login(LoginRequest request, ServerCallContext context)
     {
+        _logger.LogWarning($"AuthMicroservice : Login endpoint {request.ToString()}");
+
+
         var tokens = await _authBllService.Login(request.Email, request.Password);
         if (tokens.Success)
         {

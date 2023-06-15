@@ -36,6 +36,10 @@ builder.Services.AddScoped<IAuthBllService, AuthBllService>();
 builder.Services.AddScoped<IDbSeed, DbSeed>();
 builder.Services.AddScoped<ITokensService, TokenService>();
 
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddSeq(builder.Configuration.GetSection("Seq"));
+});
 
 
 var dbConnectionString = builder.Configuration.GetConnectionString("DockerPostgres");

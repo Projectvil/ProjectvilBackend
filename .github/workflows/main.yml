@@ -1,0 +1,31 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: SSH into VM and perform actions
+      uses: appleboy/ssh-action@master
+      with:
+        host: 47.242.74.104
+        username: root
+        password: root123*
+        script: |
+          # Удаление старого проекта
+          rm -rf $HOME/Repos/ProjectvilBackend
+
+          # Скачивание новой версии проекта
+          git clone git@github.com:Projectvil/ProjectvilBackend.git $HOME/Repos/ProjectvilBackend
+
+          # Запуск Docker-контейнеров
+          cd $HOME/Repos/ProjectvilBackend
+          docker-compose up -d

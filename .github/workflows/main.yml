@@ -31,7 +31,8 @@ jobs:
           
           docker stop $(docker ps -aq) && docker rm $(docker ps -aq)
           docker rmi --force $(docker images -q)
-
+          
+          git branch
           # Запуск Docker-контейнеров
           cd $HOME/Repos/ProjectvilBackend
-          docker-compose up -d
+          docker-compose up --build

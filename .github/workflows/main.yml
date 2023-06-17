@@ -35,4 +35,4 @@ jobs:
           git branch
           # Запуск Docker-контейнеров
           cd $HOME/Repos/ProjectvilBackend
-          docker-compose up --build
+          docker-compose up

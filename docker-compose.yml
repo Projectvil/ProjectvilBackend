@@ -8,15 +8,6 @@ services:
       - POSTGRES_DB=IdentityDb
     ports:
       - "5432:5432"
-
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=projectvil@mail.ru
-      - PGADMIN_DEFAULT_PASSWORD=1234567890
-    ports:
-      - "5052:80"
-
   web_gateway:
     build:
       context: ./WebGateway
@@ -45,8 +36,6 @@ services:
     environment:
       - ACCEPT_EULA=Y
     restart: always
-
-  
   auth_microservice:
     build:
       context: ./AuthMicroservice

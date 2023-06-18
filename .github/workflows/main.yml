@@ -21,18 +21,18 @@ jobs:
         password: root123*
         script: |
           # Удаление старого проекта
-          rm -rf $HOME/Repos/ProjectvilBackend
+          cd $HOME/Repos/ProjectvilBackend
 
           # Скачивание новой версии проекта
-          git clone git@github.com:Projectvil/ProjectvilBackend.git $HOME/Repos/ProjectvilBackend
+          git checkout dev
 
           docker ps -a
-
+         
           
-          docker stop $(docker ps -aq) && docker rm $(docker ps -aq)
-          docker rmi --force $(docker images -q)
+          docker container prune --force
           
           git branch
+          
           # Запуск Docker-контейнеров
           cd $HOME/Repos/ProjectvilBackend
-          docker-compose up
+          docker-compose up -d

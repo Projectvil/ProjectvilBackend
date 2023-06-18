@@ -20,19 +20,18 @@ jobs:
         username: root
         password: root123*
         script: |
-          # Удаление старого проекта
+          # Chage directory
           cd $HOME/Repos/ProjectvilBackend
 
-          # Скачивание новой версии проекта
+          # GIT
           git checkout dev
-
+          git pull
+          
+          #DOCKER
           docker ps -a
-         
           docker stop $(docker ps -a -q)
           docker container prune --force
           
-          git branch
-          
-          # Запуск Docker-контейнеров
+          # UP
           cd $HOME/Repos/ProjectvilBackend
           docker-compose up --build -d

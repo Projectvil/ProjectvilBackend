@@ -27,7 +27,7 @@ public class AuthController : ControllerBase
         
         try
         {
-            using var channel = GrpcChannel.ForAddress("http://localhost:5012");
+            using var channel = GrpcChannel.ForAddress("http://auth_microservice:80");
 
             var client = new AuthService.AuthServiceClient(channel);
             result = await client.LoginAsync(new LoginRequest(){Email = "admin@gmail.com", Password = "Admin123*"});

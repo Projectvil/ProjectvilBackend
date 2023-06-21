@@ -27,5 +27,6 @@ message SignUpRequest {
 
 message SignUpResult {
 	string error_message = 1;
+	string user_id = 2;
 }
 

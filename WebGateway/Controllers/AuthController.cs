@@ -29,17 +29,18 @@ public class AuthController : ControllerBase
         {
             using var channel = GrpcChannel.ForAddress("http://auth_microservice:80");
 
+
             var client = new AuthService.AuthServiceClient(channel);
-            result = await client.LoginAsync(new LoginRequest(){Email = "admin@gmail.com", Password = "Admin123*"});
+            result = await client.LoginAsync(new LoginRequest() { Email = email, Password = password });
             
         }
         catch (RpcException ex) when (ex.StatusCode == Grpc.Core.StatusCode.PermissionDenied)
         {
             return BadRequest();
         }
-        catch (RpcException)
+        catch (RpcException ex) when (ex.StatusCode == Grpc.Core.StatusCode.NotFound)
         {
-            // Handle any other error type ...
+            return NotFound(ex.Status.Detail);
         }
 
         return Ok(result);

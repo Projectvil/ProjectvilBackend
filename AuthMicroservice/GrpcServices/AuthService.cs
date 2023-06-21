@@ -1,5 +1,6 @@
 using AuthMicroservice.Services.Implementations;
 using AuthMicroservice.Services.Interfaces;
+using AuthMicroservice.Services.Responses;
 using Grpc.Core;
 
 namespace AuthMicroservice.GrpcServices;
@@ -20,9 +21,7 @@ public class AuthService : AuthMicroservice.AuthService.AuthServiceBase
 
     public override async Task<TokenResponse> Login(LoginRequest request, ServerCallContext context)
     {
-        _logger.LogWarning($"AuthMicroservice : Login endpoint {request.ToString()}");
-        _logger.LogWarning("CI/DI WORKS!");
-
+        _logger.LogWarning($"AuthMicroservice : Login endpoint with email {request.Email}");
 
         var tokens = await _authBllService.Login(request.Email, request.Password);
         if (tokens.Success)
@@ -34,19 +33,26 @@ public class AuthService : AuthMicroservice.AuthService.AuthServiceBase
                 RefreshToken = tokens.TokenResponse.RefreshToken
             };
         }
-        
-        var metadata = new Metadata
+
+
+        if (tokens.Error == Errors.InvalidPassword)
         {
-            { "User",  "aaa"}
-        };
-        
-        throw new RpcException(new Status(StatusCode.PermissionDenied, "Permission denied"), metadata);
+
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "invalid_password"));
+        }
+
+        if (tokens.Error == Errors.UserNotFound) 
+        {
+            throw new RpcException(new Status(StatusCode.NotFound, "user_not_found"));
+        }
+
+        return new TokenResponse();
     }
 
     public override async Task<SignUpResult> SignUp(SignUpRequest request, ServerCallContext context)
     {
-        await _authBllService.SignUp(request.Email, request.Password, request.Name);
+        var result = await _authBllService.SignUp(request.Email, request.Password, request.Name);
 
-        return new SignUpResult();
+        return result;
     }
 }

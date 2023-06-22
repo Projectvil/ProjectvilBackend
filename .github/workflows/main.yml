@@ -16,9 +16,9 @@ jobs:
     - name: SSH into VM and perform actions
       uses: appleboy/ssh-action@master
       with:
-        host: 47.242.74.104
-        username: root
-        password: root123*
+        host: ${{ secrets.ALIBABAHOSTNAME }}
+        username: ${{ secrets.ALIBABAUSERNAME }}
+        password: ${{ secrets.ALIBABAUSERPASSWORD }}
         script: |
           # Удаление старого проекта
           rm -rf $HOME/Repos/ProjectvilBackend

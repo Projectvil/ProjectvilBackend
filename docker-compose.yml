@@ -22,9 +22,8 @@ services:
       - ASPNETCORE_Kestrel__Certificates__Default__Password=password
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.web_gateway.rule=Host(`47.242.74.104`)"
-      - "traefik.http.routers.web_gateway.entrypoints=web"
+      - traefik.http.services.web_gateway.loadbalancer.server.port=8080
+      - traefik.http.routers.web_gateway.rule=Host(`47.242.74.104`)
     volumes:
       - /https:/https
     depends_on:
@@ -39,8 +38,6 @@ services:
     environment:
       - ACCEPT_EULA=Y
     restart: always
-    labels:
-      - "traefik.http.routers.seq.rule=Host(`47.242.74.104`) && PathPrefix(`/logger`)"
   auth_microservice:
     build:
       context: ./AuthMicroservice
@@ -68,12 +65,20 @@ services:
     ports:
       - "80:80"
       - "8080:8080"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.seq.rule=Host(`47.242.74.104`) && PathPrefix(`/logger`)"
-      - "traefik.http.routers.seq.entrypoints=web"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-
+  seq:
+    container_name: seq
+    image: datalust/seq:latest
+    ports:
+      - "5341:80"
+    volumes:
+      - seq-data:/data
+    environment:
+      - ACCEPT_EULA=Y
+    restart: always
+    labels:
+      - traefik.http.routers.seq.rule=Host(`47.242.74.104`) && PathPrefix(`/logger`)
+      - traefik.http.services.web_gateway.loadbalancer.server.port=8080
 volumes:
   seq-data:

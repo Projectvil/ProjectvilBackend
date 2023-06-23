@@ -53,7 +53,7 @@ public class TokenService : ITokensService
     }
 
     public string GenerateRefreshToken(IEnumerable<Claim> userClaims)
-    {
+    {//
         var id = userClaims.Where(claim => claim.Type == "Id");
         var jwt = new JwtSecurityToken(
             issuer: AuthOptions.Issuer,

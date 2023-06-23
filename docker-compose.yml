@@ -39,6 +39,8 @@ services:
     environment:
       - ACCEPT_EULA=Y
     restart: always
+    labels:
+      - "traefik.http.routers.seq.rule=Host(`47.242.74.104`) && PathPrefix(`/logger`)"
   auth_microservice:
     build:
       context: ./AuthMicroservice

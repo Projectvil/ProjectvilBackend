@@ -20,19 +20,18 @@ jobs:
         username: ${{ secrets.ALIBABAUSERNAME }}
         password: ${{ secrets.ALIBABAUSERPASSWORD }}
         script: |
-          # Удаление старого проекта
-          rm -rf $HOME/Repos/ProjectvilBackend
-
-          # Скачивание новой версии проекта
-          git clone git@github.com:Projectvil/ProjectvilBackend.git $HOME/Repos/ProjectvilBackend
-
-          docker ps -a
-
-          
-          docker stop $(docker ps -aq) && docker rm $(docker ps -aq)
-          docker rmi --force $(docker images -q)
-          
-          git branch
-          # Запуск Docker-контейнеров
+          # Chage directory
           cd $HOME/Repos/ProjectvilBackend
-          docker-compose up --build
+
+          # GIT
+          git checkout dev
+          git pull
+          
+          #DOCKER
+          docker ps -a
+          docker stop $(docker ps -a -q)
+          docker container prune --force
+          
+          # UP
+          cd $HOME/Repos/ProjectvilBackend
+          docker-compose up --build -d

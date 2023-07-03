@@ -35,3 +35,7 @@ jobs:
           # UP
           cd $HOME/Repos/ProjectvilBackend
           docker-compose up --build -d
+          
+          cd $HOME/scripts
+          ./restart_oleg.sh
+          

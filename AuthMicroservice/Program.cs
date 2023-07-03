@@ -11,6 +11,13 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var config = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .Build();
+
+
 // Additional configuration is required to successfully run gRPC on macOS.
 // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
 
@@ -32,40 +39,28 @@ builder.Services.AddIdentity<User, IdentityRole>(config =>
     .AddEntityFrameworkStores<AuthDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddScoped<IAuthBllService, AuthBllService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IDbSeed, DbSeed>();
 builder.Services.AddScoped<ITokensService, TokenService>();
 
 
-if (!builder.Environment.IsDevelopment()) 
+if (!builder.Environment.IsEnvironment("Local")) 
 {
     builder.Services.AddLogging(loggingBuilder =>
     {
-        loggingBuilder.AddSeq(builder.Configuration.GetSection("SeqCommonNetwork"));
+        loggingBuilder.AddSeq(config.GetSection("Seq"));
     });
 }
 
 
-
-string dbConnectionString;
-if (builder.Environment.IsDevelopment())
-{
-    dbConnectionString = builder.Configuration.GetConnectionString("DockerLocalDb");
-}
-else 
-{
-    dbConnectionString = builder.Configuration.GetConnectionString("CommonNetworkDb");
-    
-}
-
 builder.Services.AddDbContext<AuthDbContext>(options =>
-    options.UseNpgsql(dbConnectionString));
+    options.UseNpgsql(config.GetConnectionString("DbConnectionString")));
 
 var app = builder.Build();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapGrpcService<AuthMicroservice.GrpcServices.AuthService>();
+app.MapGrpcService<AuthGrpcService>();
 
 using (var scope = app.Services.CreateScope())
 {

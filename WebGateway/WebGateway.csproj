@@ -2,12 +2,17 @@
 
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
+      <_ContentIncludedByDefault Remove="appsettings.Local.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="12.0.1" />
         <PackageReference Include="Google.Protobuf" Version="3.23.2" />
         <PackageReference Include="Google.Protobuf.Tools" Version="3.23.2" />
         <PackageReference Include="Grpc.AspNetCore" Version="2.53.0" />

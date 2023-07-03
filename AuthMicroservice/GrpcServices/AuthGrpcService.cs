@@ -5,25 +5,25 @@ using Grpc.Core;
 
 namespace AuthMicroservice.GrpcServices;
 
-public class AuthService : AuthMicroservice.AuthService.AuthServiceBase
+public class AuthGrpcService : AuthMicroservice.AuthGrpcService.AuthGrpcServiceBase
 {
-    private readonly ILogger<AuthService> _logger;
-    private readonly IAuthBllService _authBllService;
+    private readonly ILogger<AuthGrpcService> _logger;
+    private readonly IAuthService _authService;
 
 
-    public AuthService(ILogger<AuthService> logger, 
-        IAuthBllService authBllService
+    public AuthGrpcService(ILogger<AuthGrpcService> logger, 
+        IAuthService authService
         )
     {
         _logger = logger;
-        _authBllService = authBllService;
+        _authService = authService;
     }
 
     public override async Task<TokenResponse> Login(LoginRequest request, ServerCallContext context)
     {
         _logger.LogWarning($"AuthMicroservice : Login endpoint with email {request.Email}");
 
-        var tokens = await _authBllService.Login(request.Email, request.Password);
+        var tokens = await _authService.Login(request.Email, request.Password);
         if (tokens.Success)
         {
             
@@ -49,10 +49,15 @@ public class AuthService : AuthMicroservice.AuthService.AuthServiceBase
         return new TokenResponse();
     }
 
-    public override async Task<SignUpResult> SignUp(SignUpRequest request, ServerCallContext context)
+    public override async Task<TokenResponse> SignUp(SignUpRequest request, ServerCallContext context)
     {
-        var result = await _authBllService.SignUp(request.Email, request.Password, request.Name);
+        var result = await _authService.SignUp(request.Email, request.Password, request.UserName);
 
-        return result;
+        if (result.Success)
+        {
+            return result.TokenResponse;
+        }
+
+        throw new RpcException(new Status(StatusCode.NotFound, result.ErrorMessage));
     }
 }

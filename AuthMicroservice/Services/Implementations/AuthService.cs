@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace AuthMicroservice.Services.Implementations;
 
-public class AuthBllService : IAuthBllService
+public class AuthService : IAuthService
 {
     private readonly UserManager<User> _userManager;
     private readonly ITokensService _tokensService;
     
-    public AuthBllService(UserManager<User> userManager, ITokensService tokensService)
+    public AuthService(UserManager<User> userManager, ITokensService tokensService)
     {
         _userManager = userManager;
         _tokensService = tokensService;
@@ -54,7 +54,7 @@ public class AuthBllService : IAuthBllService
 
     }
 
-    public async Task<SignUpResult> SignUp(string email, string password, string name)
+    public async Task<AuthServiceResponse> SignUp(string email, string password, string name)
     {
         var user = new User() { Email = email, UserName = name };
         var registrationResult = await _userManager.CreateAsync(user, password);
@@ -62,15 +62,18 @@ public class AuthBllService : IAuthBllService
 
         if (registrationResult.Succeeded)
         {
-            return new SignUpResult()
+            var token = await _tokensService.GenerateTokens(user);
+            
+            return new AuthServiceResponse()
             {
-                UserId = userId
+                TokenResponse = token
             };
         }
 
-        return new SignUpResult()
+        return new AuthServiceResponse()
         {
-            ErrorMessage = registrationResult.Errors.ToString()
-        };
+            Success = false,
+            ErrorMessage = registrationResult.Errors.First().Code
+        };        
     }
 }
